@@ -72,7 +72,7 @@ class EventDiscoveryEngine:
             
             # Process and store events
             processed_events = []
-            async with get_async_db().__anext__() as db:
+            async for db in get_async_db():
                 for raw_event in raw_events:
                     try:
                         processed_event = await self._process_and_store_event(db, raw_event, platform)
@@ -87,7 +87,8 @@ class EventDiscoveryEngine:
                 
                 # Store discovery log
                 db.add(discovery_log)
-                await db.commit()
+                await db.commit()    
+            break
             
             logger.info("Event discovery completed", 
                        events_found=len(raw_events),
@@ -99,9 +100,10 @@ class EventDiscoveryEngine:
             discovery_log.success = False
             discovery_log.error_message = str(e)
             
-            async with get_async_db().__anext__() as db:
+            async for db in get_async_db():
                 db.add(discovery_log)
                 await db.commit()
+            break
             
             logger.error("Event discovery failed", error=str(e))
             raise
@@ -128,7 +130,7 @@ class EventDiscoveryEngine:
         else:
             end_date = datetime(target_year, target_month + 1, 1) - timedelta(days=1)
         
-        async with get_async_db().__anext__() as db:
+        async for db in get_async_db():
             # Build query
             query = select(Event).where(
                 and_(
@@ -197,6 +199,7 @@ class EventDiscoveryEngine:
                 "month": target_month,
                 "year": target_year
             }
+        break
     
     async def _process_and_store_event(
         self, 
@@ -282,7 +285,7 @@ class EventDiscoveryEngine:
         Mark an event as watched by a user session.
         """
         try:
-            async with get_async_db().__anext__() as db:
+            async for db in get_async_db():
                 # Check if already watched
                 existing_query = select(WatchedEvent).where(
                     and_(
@@ -310,6 +313,7 @@ class EventDiscoveryEngine:
                            event_id=event_id)
                 
                 return True
+            break
                 
         except Exception as e:
             logger.error("Failed to mark event as watched", 
@@ -323,7 +327,7 @@ class EventDiscoveryEngine:
         Remove watched status from an event for a user session.
         """
         try:
-            async with get_async_db().__anext__() as db:
+            async for db in get_async_db():
                 watched_query = select(WatchedEvent).where(
                     and_(
                         WatchedEvent.session_id == session_id,
@@ -342,6 +346,7 @@ class EventDiscoveryEngine:
                                event_id=event_id)
                 
                 return True
+            break
                 
         except Exception as e:
             logger.error("Failed to remove event watch status", 

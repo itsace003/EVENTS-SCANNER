@@ -48,7 +48,7 @@ class SessionManager:
             default_preferences.update(preferences)
         
         try:
-            async with get_async_db().__anext__() as db:
+            async for db in get_async_db():
                 session = UserSession(
                     session_id=session_id,
                     location=default_preferences["location"],
@@ -60,6 +60,7 @@ class SessionManager:
                 
                 logger.info("New session created", session_id=session_id[:8])
                 return session_id
+            break
                 
         except Exception as e:
             logger.error("Failed to create session", error=str(e))
@@ -70,7 +71,7 @@ class SessionManager:
         Retrieve a user session from the database.
         """
         try:
-            async with get_async_db().__anext__() as db:
+            async for db in get_async_db():
                 query = select(UserSession).where(UserSession.session_id == session_id)
                 result = await db.execute(query)
                 session = result.scalar_one_or_none()
@@ -81,6 +82,7 @@ class SessionManager:
                     await db.commit()
                 
                 return session
+            break
                 
         except Exception as e:
             logger.error("Failed to retrieve session", session_id=session_id[:8], error=str(e))
@@ -91,7 +93,7 @@ class SessionManager:
         Update user preferences for a session.
         """
         try:
-            async with get_async_db().__anext__() as db:
+            async for db in get_async_db():
                 # Get current session
                 query = select(UserSession).where(UserSession.session_id == session_id)
                 result = await db.execute(query)
@@ -118,6 +120,7 @@ class SessionManager:
                            updated_keys=list(preferences.keys()))
                 
                 return True
+            break
                 
         except Exception as e:
             logger.error("Failed to update session preferences", 
@@ -170,7 +173,7 @@ class SessionManager:
         try:
             cutoff_date = datetime.utcnow() - self.session_lifetime
             
-            async with get_async_db().__anext__() as db:
+            async for db in get_async_db():
                 # Get expired sessions
                 query = select(UserSession).where(UserSession.created_at < cutoff_date)
                 result = await db.execute(query)
@@ -187,6 +190,7 @@ class SessionManager:
                     logger.info(f"Cleaned up {count} expired sessions")
                 
                 return count
+            break
                 
         except Exception as e:
             logger.error("Failed to cleanup expired sessions", error=str(e))
@@ -197,7 +201,7 @@ class SessionManager:
         Get statistics for a user session.
         """
         try:
-            async with get_async_db().__anext__() as db:
+            async for db in get_async_db():
                 from .models import WatchedEvent
                 
                 session = await self.get_session(session_id)
@@ -223,6 +227,7 @@ class SessionManager:
                 }
                 
                 return stats
+            break
                 
         except Exception as e:
             logger.error("Failed to get session stats", session_id=session_id[:8], error=str(e))
@@ -244,7 +249,7 @@ class SessionManager:
         Remove a specific expired session.
         """
         try:
-            async with get_async_db().__anext__() as db:
+            async for db in get_async_db():
                 query = select(UserSession).where(UserSession.session_id == session_id)
                 result = await db.execute(query)
                 session = result.scalar_one_or_none()
@@ -253,6 +258,7 @@ class SessionManager:
                     await db.delete(session)
                     await db.commit()
                     logger.info("Expired session cleaned up", session_id=session_id[:8])
+            break
                     
         except Exception as e:
             logger.error("Failed to cleanup expired session", session_id=session_id[:8], error=str(e))
