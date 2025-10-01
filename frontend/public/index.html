@@ -5,20 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="AI Event Scanner v2.0 - Intelligent event discovery using Perplexity AI" />
     <meta name="theme-color" content="#1f2937" />
+    <meta name="author" content="AI Event Scanner Team" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="AI Event Scanner v2.0" />
+    <meta property="og:description" content="Intelligent event discovery using Perplexity AI" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:title" content="AI Event Scanner v2.0" />
+    <meta property="twitter:description" content="Intelligent event discovery using Perplexity AI" />
     
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
     
     <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.json" />
     
     <!-- Preconnect to improve performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://api.perplexity.ai" />
     
     <title>AI Event Scanner v2.0</title>
 </head>
-<body class="bg-gray-900 text-white">
+<body class="bg-gray-900 text-white antialiased">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Fallback for users with JavaScript disabled -->
+    <noscript>
+        <div style="padding: 2rem; text-align: center; background: #1f2937; color: white; min-height: 100vh; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+            <h1>AI Event Scanner v2.0</h1>
+            <p>This application requires JavaScript to run properly.</p>
+            <p>Please enable JavaScript in your browser and refresh the page.</p>
+        </div>
+    </noscript>
 </body>
 </html>

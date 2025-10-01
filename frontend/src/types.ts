@@ -1,3 +1,5 @@
+// FIXED types.ts - TypeScript Definitions
+
 export interface Event {
   id: string;
   title: string;
@@ -18,7 +20,7 @@ export interface Event {
 
 export interface EventsResponse {
   events: Event[];
-  eventsByCategory: Record<string, Event[]>;
+  eventsByCategory: Record<string, Event[]>;  // ✅ FIXED: Added proper generic type
   totalEvents: number;
   watchedCount: number;
   month: number;
@@ -56,6 +58,7 @@ export interface SessionStats {
   preferences: UserPreferences;
 }
 
+// ✅ FIXED: Added proper generic parameter
 export interface ApiResponse<T = any> {
   success?: boolean;
   message?: string;

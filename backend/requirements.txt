@@ -1,4 +1,4 @@
-# AI Event Scanner v2.0 - Backend Requirements
+# AI Event Scanner v2.0 - Backend Requirements (FIXED)
 
 # Core Framework
 fastapi==0.104.1
@@ -7,7 +7,7 @@ uvicorn[standard]==0.24.0
 # Database
 sqlalchemy==2.0.23
 alembic==1.12.1
-sqlite3
+aiosqlite==0.19.0
 
 # HTTP Client & Web Scraping
 httpx==0.25.2
